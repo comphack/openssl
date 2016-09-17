@@ -23,6 +23,10 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
+cmake_minimum_required( VERSION 2.8.3 )
+
+project( openssl )
+
 if( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC" )
   set( CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} /MTd" )
   set( CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /MTd" )
@@ -36,9 +40,6 @@ include_directories(
   ${CMAKE_BINARY_DIR}
   ${CMAKE_BINARY_DIR}/openssl
 )
-
-project( openssl )
-cmake_minimum_required( VERSION 2.8.3 )
 
 set(BUILD_OBJECT_LIBRARY_ONLY "OFF" CACHE BOOL "Build object library only")
 
