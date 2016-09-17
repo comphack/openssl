@@ -239,16 +239,27 @@ if(BUILD_OBJECT_LIBRARY_ONLY)
   list( REMOVE_ITEM crypto_headers ./opensslconf.h )
   file( COPY ${crypto_headers} DESTINATION openssl )
 else()
-  add_library( crypto ${LIBSRC} ${OBJECTS_SRC} )
+  if( WIN32 )
+    add_library( libeay32 STATIC ${LIBSRC} ${OBJECTS_SRC} )
+  else()
+    add_library( crypto STATIC ${LIBSRC} ${OBJECTS_SRC} )
+  endif()
 
   if( WIN32 AND NOT CYGWIN )
-    target_link_libraries( crypto ws2_32 crypt32 )
+    target_link_libraries( libeay32 ws2_32 crypt32 )
   endif()
 
   install( DIRECTORY ${CMAKE_BINARY_DIR}/openssl DESTINATION include )
 
-  install( TARGETS crypto
-      RUNTIME DESTINATION bin
-      LIBRARY DESTINATION lib
-      ARCHIVE DESTINATION lib )
+  if( WIN32 )
+    install( TARGETS libeay32
+        RUNTIME DESTINATION bin
+        LIBRARY DESTINATION lib
+        ARCHIVE DESTINATION lib )
+  else()
+    install( TARGETS crypto
+        RUNTIME DESTINATION bin
+        LIBRARY DESTINATION lib
+        ARCHIVE DESTINATION lib )
+  endif()
 endif()

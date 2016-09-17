@@ -46,14 +46,26 @@ if(BUILD_OBJECT_LIBRARY_ONLY)
   file( COPY ${LIBHDR} DESTINATION ${CMAKE_CURRENT_BINARY_DIR}/../ )
   add_library( ssl OBJECT ${LIBSRC} ${LIBHDR} )
 else()
-  add_library( ssl ${LIBSRC} )
-  target_link_libraries( ssl crypto )
+  if( WIN32 )
+    add_library( ssleay32 STATIC ${LIBSRC} )
+    target_link_libraries( ssleay32 libeay32 )
+  else()
+    add_library( ssl STATIC ${LIBSRC} )
+    target_link_libraries( ssl crypto )
+  endif()
 
   install( FILES ssl.h ssl2.h ssl3.h ssl23.h tls1.h dtls1.h kssl.h
       DESTINATION include/openssl )
 
-  install( TARGETS ssl
-      RUNTIME DESTINATION bin
-      LIBRARY DESTINATION lib
-      ARCHIVE DESTINATION lib )
+  if( WIN32 )
+    install( TARGETS ssleay32
+        RUNTIME DESTINATION bin
+        LIBRARY DESTINATION lib
+        ARCHIVE DESTINATION lib )
+  else()
+    install( TARGETS ssl
+        RUNTIME DESTINATION bin
+        LIBRARY DESTINATION lib
+        ARCHIVE DESTINATION lib )
+  endif()
 endif()

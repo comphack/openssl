@@ -53,7 +53,7 @@ file( COPY e_os2.h DESTINATION ${CMAKE_BINARY_DIR}/openssl )
 if(${BUILD_OBJECT_LIBRARY_ONLY})
   file( COPY e_os2.h DESTINATION ${CMAKE_CURRENT_BINARY_DIR} )
 else()
-  add_subdirectory( apps )
+  #add_subdirectory( apps )
 
   install( FILES e_os2.h DESTINATION include/openssl )
 
