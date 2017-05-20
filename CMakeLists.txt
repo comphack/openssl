@@ -44,7 +44,7 @@ elseif( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC" )
 else()
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fPIC")
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
-endif( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC" )
+endif()
 
 include_directories(
   ${CMAKE_SOURCE_DIR}
@@ -53,6 +53,12 @@ include_directories(
 )
 
 set(BUILD_OBJECT_LIBRARY_ONLY "OFF" CACHE BOOL "Build object library only")
+
+option(BUILD_VALGRIND_FRIENDLY "Build with -DPURIFY so Valgrind will not show errors in OpenSSL's PRNG." OFF)
+
+if( BUILD_VALGRIND_FRIENDLY )
+  add_definitions( -DPURIFY )
+endif()
 
 add_definitions( -DOPENSSL_NO_ASM )
 
