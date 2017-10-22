@@ -61,6 +61,7 @@ if( BUILD_VALGRIND_FRIENDLY )
 endif()
 
 add_definitions( -DOPENSSL_NO_ASM )
+add_definitions( -DOPENSSL_THREADS )
 
 if( WIN32 AND NOT CYGWIN )
   add_definitions( -DOPENSSL_SYSNAME_WIN32 )
