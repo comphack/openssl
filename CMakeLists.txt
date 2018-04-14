@@ -46,6 +46,11 @@ else()
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fPIC")
 endif()
 
+if( "${CMAKE_CXX_COMPILER_ID}" STREQUAL "MSVC" )
+  set( CMAKE_C_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS_RELWITHDEBINFO} /Z7" )
+  set( CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} /Z7" )
+endif()
+
 include_directories(
   ${CMAKE_SOURCE_DIR}
   ${CMAKE_BINARY_DIR}
@@ -93,11 +98,3 @@ else()
 
   include( CPack )
 endif()
-
-# Include the PDB file if on Windows
-if(WIN32)
-    install(FILES $<TARGET_PBB_FILE:ssleay32>
-      DESTINATION lib)
-    install(FILES $<TARGET_PDB_FILE:libeay32>
-      DESTINATION lib)
-endif(WIN32)
