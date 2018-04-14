@@ -96,6 +96,8 @@ endif()
 
 # Include the PDB file if on Windows
 if(WIN32)
-    install(FILES $<TARGET_PDB_FILE:${PROJECT_NAME}>
+    install(FILES $<TARGET_PBB_FILE:ssleay32>
+      DESTINATION lib)
+    install(FILES $<TARGET_PDB_FILE:libeay32>
       DESTINATION lib)
 endif(WIN32)
