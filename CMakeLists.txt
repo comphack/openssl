@@ -93,3 +93,9 @@ else()
 
   include( CPack )
 endif()
+
+# Include the PDB file if on Windows
+if(WIN32)
+    install(FILES $<TARGET_PDB_FILE:${PROJECT_NAME}>
+      DESTINATION lib)
+endif(WIN32)
