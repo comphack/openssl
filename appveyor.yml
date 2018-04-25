@@ -1,60 +1,34 @@
-platform:
-    - x86
-    - x64
+version: "{branch}-{build}"
+test: off
 
-environment:
-    matrix:
-        - VSVER: 9
-        - VSVER: 10
-        - VSVER: 11
-        - VSVER: 12
-        - VSVER: 14
+os:
+  - Visual Studio 2015
+
+platform:
+#  - x86
+  - x64
 
 configuration:
-    - plain
-    - shared
+#  - Debug
+#  - Release
+  - RelWithDebInfo
 
-matrix:
-    allow_failures:
-        - platform: x64
-          VSVER: 9
-        - platform: x64
-          VSVER: 10
-        - platform: x64
-          VSVER: 11
+init:
+  - if %platform%==x64 (set CMAKE_PREFIX_PATH=C:\Qt\5.7\msvc2015_64) else (set CMAKE_PREFIX_PATH=C:\Qt\5.7\msvc2015)
+  - if %platform%==x64 (set generator=Visual Studio 14 2015 Win64) else (set generator=Visual Studio 14 2015)
+  - if %platform%==x64 (set msplatform=x64) else (set msplatform=Win32)
+  - echo "Platform      = %platform%"
+  - echo "MS Platform   = %msplatform%"
+  - echo "Configuration = %configuration%"
 
 before_build:
-    - ps: >-
-        If ($env:Platform -Match "x86") {
-            $env:VCVARS_PLATFORM="x86"
-            $env:TARGET="VC-WIN32"
-            $env:DO="do_ms"
-        } Else {
-            $env:VCVARS_PLATFORM="amd64"
-            $env:TARGET="VC-WIN64A"
-            $env:DO="do_win64a"
-        }
-    - ps: >-
-        If ($env:Configuration -Like "*shared*") {
-            $env:MAK="ntdll.mak"
-        } Else {
-            $env:MAK="nt.mak"
-        }
-    - ps: $env:VSCOMNTOOLS=(Get-Content ("env:VS" + "$env:VSVER" + "0COMNTOOLS"))
-    - call "%VSCOMNTOOLS%\..\..\VC\vcvarsall.bat" %VCVARS_PLATFORM%
-    - perl Configure %TARGET% no-asm
-    - call ms\%DO%
+  - md build
+  - cd build
 
 build_script:
-    - nmake /f ms\%MAK%
+  - cmake -DCMAKE_RELWITHDEBINFO_POSTFIX=_reldeb -DCMAKE_DEBUG_POSTFIX=d -DUSE_STATIC_RUNTIME=OFF -DCMAKE_INSTALL_PREFIX="%appveyor_build_folder%\build\install" -DCMAKE_CUSTOM_CONFIGURATION_TYPES="%configuration%" -G"%generator%" ..
+  - cmake --build . --config %configuration% --target package
 
-test_script:
-    - nmake /f ms\%MAK% test
-
-notifications:
-    - provider: Email
-      to:
-          - openssl-commits@openssl.org
-      on_build_success: false
-      on_build_failure: true
-      on_build_status_changed: true
+artifacts:
+  - path: build\openssl-*.zip
+    name: openssl_installer
